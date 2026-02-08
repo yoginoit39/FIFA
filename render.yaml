@@ -116,20 +116,7 @@ services:
     envVars:
       - key: SERVER_PORT
         value: 10000
-      - key: MATCH_SERVICE_URL
-        fromService:
-          type: web
-          name: match-service
-          property: hostWithProtocol
-      - key: STADIUM_SERVICE_URL
-        fromService:
-          type: web
-          name: stadium-service
-          property: hostWithProtocol
-      - key: TICKET_SERVICE_URL
-        fromService:
-          type: web
-          name: ticket-service
-          property: hostWithProtocol
       - key: JWT_SECRET
         generateValue: true
+      # Service URLs must be set manually after deployment:
+      # MATCH_SERVICE_URL, STADIUM_SERVICE_URL, TICKET_SERVICE_URL

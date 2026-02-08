@@ -68,7 +68,17 @@ This app can be hosted for free using **Render.com** (backend + database) and **
    - `ticket-service` — Ticket links
    - `api-gateway` — Routes all requests
 
-4. Once deployed, **initialize the database schema**:
+4. **Configure api-gateway environment variables**:
+   - Go to `api-gateway` → **Environment** tab
+   - Add the following variables (use your actual service URLs from the dashboard):
+     ```
+     MATCH_SERVICE_URL=https://match-service-xxxx.onrender.com
+     STADIUM_SERVICE_URL=https://stadium-service-xxxx.onrender.com
+     TICKET_SERVICE_URL=https://ticket-service-xxxx.onrender.com
+     ```
+   - Click **Save Changes** (this will trigger a redeploy)
+
+5. **Initialize the database schema**:
    - In Render dashboard, go to `worldcup-db` → **Connect** tab
    - Copy the **External Database URL**
    - Run the init script:
@@ -76,7 +86,7 @@ This app can be hosted for free using **Render.com** (backend + database) and **
      psql "YOUR_RENDER_DB_URL" -f database/init/01-create-schemas.sql
      ```
 
-5. Note your **api-gateway** service URL (e.g., `https://api-gateway-xxxx.onrender.com`)
+6. Note your **api-gateway** service URL (e.g., `https://api-gateway-xxxx.onrender.com`)
 
 ### Step 2 — Deploy Frontend on Vercel
 
