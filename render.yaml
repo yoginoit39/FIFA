@@ -1,0 +1,135 @@
+databases:
+  - name: worldcup-db
+    plan: free
+    databaseName: worldcup2026_db
+    user: worldcup_user
+
+services:
+  - type: web
+    name: match-service
+    runtime: docker
+    plan: free
+    rootDir: backend/match-service
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: worldcup-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: worldcup-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: worldcup-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: worldcup-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: worldcup-db
+          property: password
+      - key: DB_SCHEMA
+        value: match_service_schema
+      - key: DATA_SYNC_ENABLED
+        value: "false"
+
+  - type: web
+    name: stadium-service
+    runtime: docker
+    plan: free
+    rootDir: backend/stadium-service
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: worldcup-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: worldcup-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: worldcup-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: worldcup-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: worldcup-db
+          property: password
+      - key: DB_SCHEMA
+        value: stadium_service_schema
+
+  - type: web
+    name: ticket-service
+    runtime: docker
+    plan: free
+    rootDir: backend/ticket-service
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: worldcup-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: worldcup-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: worldcup-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: worldcup-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: worldcup-db
+          property: password
+      - key: DB_SCHEMA
+        value: ticket_service_schema
+
+  - type: web
+    name: api-gateway
+    runtime: docker
+    plan: free
+    rootDir: backend/api-gateway
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 10000
+      - key: MATCH_SERVICE_URL
+        fromService:
+          type: web
+          name: match-service
+          property: hostWithProtocol
+      - key: STADIUM_SERVICE_URL
+        fromService:
+          type: web
+          name: stadium-service
+          property: hostWithProtocol
+      - key: TICKET_SERVICE_URL
+        fromService:
+          type: web
+          name: ticket-service
+          property: hostWithProtocol
+      - key: JWT_SECRET
+        generateValue: true

@@ -102,6 +102,7 @@ CREATE TABLE ticket_service_schema.ticket_links (
     price_range VARCHAR(100),  -- e.g., "$50 - $500"
     availability_status VARCHAR(50) DEFAULT 'AVAILABLE',  -- AVAILABLE, SOLD_OUT, NOT_YET_AVAILABLE
     priority INTEGER DEFAULT 1,  -- Display order (1 = highest)
+    min_price INTEGER,  -- Minimum ticket price for sorting
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -202,15 +203,108 @@ INSERT INTO match_service_schema.teams
 ('POR', 'Portugal', 'Portugal', 6);
 
 -- ============================================================================
--- SEED DATA - Sample Ticket Providers
+-- SEED DATA - Sample Matches
+-- ============================================================================
+
+INSERT INTO match_service_schema.matches
+(home_team_id, away_team_id, match_date, match_time, status, home_score, away_score, round, group_name, venue_name, venue_city, venue_country) VALUES
+(1, 2, '2026-06-11', '20:00:00', 'SCHEDULED', 0, 0, 'Opening Match', 'N/A', 'MetLife Stadium', 'East Rutherford', 'USA'),
+(6, 9, '2026-06-12', '14:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group A', 'AT&T Stadium', 'Arlington', 'USA'),
+(4, 10, '2026-06-12', '17:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group A', 'Hard Rock Stadium', 'Miami Gardens', 'USA'),
+(6, 10, '2026-06-16', '14:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group A', 'Mercedes-Benz Stadium', 'Atlanta', 'USA'),
+(4, 9, '2026-06-16', '20:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group A', 'SoFi Stadium', 'Inglewood', 'USA'),
+(7, 5, '2026-06-13', '11:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group B', 'Lumen Field', 'Seattle', 'USA'),
+(8, 3, '2026-06-13', '14:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group B', 'BMO Field', 'Toronto', 'Canada'),
+(7, 3, '2026-06-17', '17:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group B', 'BC Place', 'Vancouver', 'Canada'),
+(8, 5, '2026-06-17', '20:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group B', 'Estadio Azteca', 'Mexico City', 'Mexico'),
+(1, 4, '2026-06-14', '20:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group C', 'NRG Stadium', 'Houston', 'USA'),
+(2, 6, '2026-06-14', '17:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group C', 'Estadio BBVA', 'Monterrey', 'Mexico'),
+(9, 7, '2026-06-15', '14:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group D', 'Arrowhead Stadium', 'Kansas City', 'USA'),
+(10, 8, '2026-06-15', '11:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group D', 'Estadio Akron', 'Guadalajara', 'Mexico'),
+(4, 7, '2026-06-30', '16:00:00', 'SCHEDULED', 0, 0, 'Round of 16', 'N/A', 'Levi''s Stadium', 'Santa Clara', 'USA'),
+(6, 5, '2026-06-30', '19:00:00', 'SCHEDULED', 0, 0, 'Round of 16', 'N/A', 'Gillette Stadium', 'Foxborough', 'USA'),
+(1, 9, '2026-07-01', '16:00:00', 'SCHEDULED', 0, 0, 'Round of 16', 'N/A', 'Lincoln Financial Field', 'Philadelphia', 'USA'),
+(4, 5, '2026-06-22', '14:30:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group E', 'Estadio Azteca', 'Mexico City', 'Mexico'),
+(7, 8, '2026-06-22', '18:00:00', 'SCHEDULED', 0, 0, 'Group Stage', 'Group E', 'Lumen Field', 'Seattle', 'USA');
+
+-- ============================================================================
+-- SEED DATA - Ticket Providers (all 18 matches)
 -- ============================================================================
 
 INSERT INTO ticket_service_schema.ticket_links
-(match_id, provider_name, booking_url, price_range, availability_status, priority) VALUES
-(1, 'FIFA Official', 'https://www.fifa.com/tickets', '$100 - $1000', 'NOT_YET_AVAILABLE', 1),
-(1, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$150 - $1500', 'NOT_YET_AVAILABLE', 2),
-(1, 'StubHub', 'https://www.stubhub.com/world-cup', '$200 - $2000', 'NOT_YET_AVAILABLE', 3),
-(1, 'SeatGeek', 'https://seatgeek.com/world-cup', '$175 - $1800', 'NOT_YET_AVAILABLE', 4);
+(match_id, provider_name, booking_url, price_range, availability_status, priority, min_price) VALUES
+(1, 'SeatGeek', 'https://seatgeek.com/world-cup', '$310 - $2200', 'AVAILABLE', 1, 310),
+(1, 'FIFA Official', 'https://www.fifa.com/tickets', '$350 - $2500', 'AVAILABLE', 2, 350),
+(1, 'StubHub', 'https://www.stubhub.com/world-cup', '$390 - $2800', 'AVAILABLE', 3, 390),
+(1, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$420 - $3000', 'AVAILABLE', 4, 420),
+(2, 'StubHub', 'https://www.stubhub.com/world-cup', '$98 - $720', 'AVAILABLE', 1, 98),
+(2, 'SeatGeek', 'https://seatgeek.com/world-cup', '$110 - $780', 'AVAILABLE', 2, 110),
+(2, 'FIFA Official', 'https://www.fifa.com/tickets', '$120 - $800', 'AVAILABLE', 3, 120),
+(2, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$145 - $950', 'AVAILABLE', 4, 145),
+(3, 'StubHub', 'https://www.stubhub.com/world-cup', '$105 - $820', 'AVAILABLE', 1, 105),
+(3, 'SeatGeek', 'https://seatgeek.com/world-cup', '$119 - $860', 'AVAILABLE', 2, 119),
+(3, 'FIFA Official', 'https://www.fifa.com/tickets', '$130 - $900', 'AVAILABLE', 3, 130),
+(3, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$155 - $1050', 'AVAILABLE', 4, 155),
+(4, 'StubHub', 'https://www.stubhub.com/world-cup', '$88 - $700', 'AVAILABLE', 1, 88),
+(4, 'SeatGeek', 'https://seatgeek.com/world-cup', '$95 - $720', 'AVAILABLE', 2, 95),
+(4, 'FIFA Official', 'https://www.fifa.com/tickets', '$110 - $750', 'AVAILABLE', 3, 110),
+(4, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$130 - $880', 'AVAILABLE', 4, 130),
+(5, 'StubHub', 'https://www.stubhub.com/world-cup', '$99 - $790', 'AVAILABLE', 1, 99),
+(5, 'SeatGeek', 'https://seatgeek.com/world-cup', '$112 - $810', 'AVAILABLE', 2, 112),
+(5, 'FIFA Official', 'https://www.fifa.com/tickets', '$125 - $850', 'AVAILABLE', 3, 125),
+(5, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$148 - $990', 'AVAILABLE', 4, 148),
+(6, 'StubHub', 'https://www.stubhub.com/world-cup', '$118 - $980', 'AVAILABLE', 1, 118),
+(6, 'SeatGeek', 'https://seatgeek.com/world-cup', '$128 - $1050', 'AVAILABLE', 2, 128),
+(6, 'FIFA Official', 'https://www.fifa.com/tickets', '$140 - $1100', 'AVAILABLE', 3, 140),
+(6, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$165 - $1300', 'AVAILABLE', 4, 165),
+(7, 'StubHub', 'https://www.stubhub.com/world-cup', '$65 - $460', 'AVAILABLE', 1, 65),
+(7, 'SeatGeek', 'https://seatgeek.com/world-cup', '$72 - $490', 'AVAILABLE', 2, 72),
+(7, 'FIFA Official', 'https://www.fifa.com/tickets', '$80 - $500', 'AVAILABLE', 3, 80),
+(7, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$95 - $580', 'AVAILABLE', 4, 95),
+(8, 'StubHub', 'https://www.stubhub.com/world-cup', '$60 - $440', 'AVAILABLE', 1, 60),
+(8, 'SeatGeek', 'https://seatgeek.com/world-cup', '$68 - $470', 'AVAILABLE', 2, 68),
+(8, 'FIFA Official', 'https://www.fifa.com/tickets', '$75 - $480', 'AVAILABLE', 3, 75),
+(8, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$88 - $550', 'AVAILABLE', 4, 88),
+(9, 'StubHub', 'https://www.stubhub.com/world-cup', '$108 - $880', 'AVAILABLE', 1, 108),
+(9, 'SeatGeek', 'https://seatgeek.com/world-cup', '$122 - $900', 'AVAILABLE', 2, 122),
+(9, 'FIFA Official', 'https://www.fifa.com/tickets', '$135 - $950', 'AVAILABLE', 3, 135),
+(9, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$158 - $1100', 'AVAILABLE', 4, 158),
+(10, 'StubHub', 'https://www.stubhub.com/world-cup', '$132 - $1100', 'AVAILABLE', 1, 132),
+(10, 'SeatGeek', 'https://seatgeek.com/world-cup', '$145 - $1150', 'AVAILABLE', 2, 145),
+(10, 'FIFA Official', 'https://www.fifa.com/tickets', '$160 - $1200', 'AVAILABLE', 3, 160),
+(10, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$188 - $1400', 'AVAILABLE', 4, 188),
+(11, 'StubHub', 'https://www.stubhub.com/world-cup', '$72 - $550', 'AVAILABLE', 1, 72),
+(11, 'SeatGeek', 'https://seatgeek.com/world-cup', '$82 - $580', 'AVAILABLE', 2, 82),
+(11, 'FIFA Official', 'https://www.fifa.com/tickets', '$90 - $600', 'AVAILABLE', 3, 90),
+(11, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$108 - $700', 'AVAILABLE', 4, 108),
+(12, 'StubHub', 'https://www.stubhub.com/world-cup', '$92 - $720', 'AVAILABLE', 1, 92),
+(12, 'SeatGeek', 'https://seatgeek.com/world-cup', '$104 - $750', 'AVAILABLE', 2, 104),
+(12, 'FIFA Official', 'https://www.fifa.com/tickets', '$115 - $780', 'AVAILABLE', 3, 115),
+(12, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$138 - $920', 'AVAILABLE', 4, 138),
+(13, 'StubHub', 'https://www.stubhub.com/world-cup', '$96 - $760', 'AVAILABLE', 1, 96),
+(13, 'SeatGeek', 'https://seatgeek.com/world-cup', '$108 - $790', 'AVAILABLE', 2, 108),
+(13, 'FIFA Official', 'https://www.fifa.com/tickets', '$120 - $820', 'AVAILABLE', 3, 120),
+(13, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$142 - $960', 'AVAILABLE', 4, 142),
+(14, 'StubHub', 'https://www.stubhub.com/world-cup', '$175 - $1400', 'AVAILABLE', 1, 175),
+(14, 'SeatGeek', 'https://seatgeek.com/world-cup', '$188 - $1450', 'AVAILABLE', 2, 188),
+(14, 'FIFA Official', 'https://www.fifa.com/tickets', '$200 - $1500', 'AVAILABLE', 3, 200),
+(14, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$238 - $1800', 'AVAILABLE', 4, 238),
+(15, 'StubHub', 'https://www.stubhub.com/world-cup', '$218 - $1850', 'AVAILABLE', 1, 218),
+(15, 'SeatGeek', 'https://seatgeek.com/world-cup', '$235 - $1950', 'AVAILABLE', 2, 235),
+(15, 'FIFA Official', 'https://www.fifa.com/tickets', '$250 - $2000', 'AVAILABLE', 3, 250),
+(15, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$295 - $2400', 'AVAILABLE', 4, 295),
+(16, 'StubHub', 'https://www.stubhub.com/world-cup', '$192 - $1650', 'AVAILABLE', 1, 192),
+(16, 'SeatGeek', 'https://seatgeek.com/world-cup', '$208 - $1720', 'AVAILABLE', 2, 208),
+(16, 'FIFA Official', 'https://www.fifa.com/tickets', '$220 - $1800', 'AVAILABLE', 3, 220),
+(16, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$260 - $2100', 'AVAILABLE', 4, 260),
+(17, 'StubHub', 'https://www.stubhub.com/world-cup', '$38 - $185', 'AVAILABLE', 1, 38),
+(17, 'SeatGeek', 'https://seatgeek.com/world-cup', '$42 - $195', 'AVAILABLE', 2, 42),
+(17, 'FIFA Official', 'https://www.fifa.com/tickets', '$45 - $200', 'AVAILABLE', 3, 45),
+(17, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', '$52 - $240', 'AVAILABLE', 4, 52),
+(18, 'FIFA Official', 'https://www.fifa.com/tickets', 'Sold Out', 'SOLD_OUT', 1, 0),
+(18, 'Ticketmaster', 'https://www.ticketmaster.com/world-cup', 'Sold Out', 'SOLD_OUT', 2, 0),
+(18, 'StubHub', 'https://www.stubhub.com/world-cup', 'Sold Out', 'SOLD_OUT', 3, 0),
+(18, 'SeatGeek', 'https://seatgeek.com/world-cup', 'Sold Out', 'SOLD_OUT', 4, 0);
 
 -- ============================================================================
 -- SEED DATA - Sample Admin User
