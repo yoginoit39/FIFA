@@ -189,7 +189,7 @@ const HomePage = () => {
       </Box>
 
       {/* Featured Matches */}
-      <Container maxWidth="xl" sx={{ py: { xs: 6, md: 10 } }}>
+      <Container maxWidth={false} sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 4, md: 6, lg: 8 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 4 }}>
           <Box>
             <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: '0.1em' }}>

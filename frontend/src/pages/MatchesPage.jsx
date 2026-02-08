@@ -73,7 +73,7 @@ const MatchesPage = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 } }}>
+    <Container maxWidth={false} sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, sm: 4, md: 6, lg: 8 } }}>
       <Box sx={{ mb: 5 }}>
         <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: '0.1em' }}>
           Schedule
