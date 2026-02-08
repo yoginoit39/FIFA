@@ -21,7 +21,6 @@ const Footer = () => {
           </Box>
           <Box sx={{ display: 'flex', gap: 3 }}>
             <Typography variant="caption" color="text.secondary">Built with Spring Boot & React</Typography>
-            <Typography variant="caption" color="text.secondary">For educational purposes only</Typography>
           </Box>
         </Box>
       </Container>

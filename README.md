@@ -2,6 +2,11 @@
 
 A full-stack microservices application for browsing FIFA World Cup 2026 match schedules, stadiums, and comparing ticket prices across providers.
 
+## Live Demo
+
+🌐 **Frontend:** https://fifa-7cfb.vercel.app
+🔌 **Backend API:** https://api-gateway-d1ne.onrender.com
+
 ## Tech Stack
 
 - **Backend**: Spring Boot, Java 17, PostgreSQL 16
@@ -105,4 +110,4 @@ This app can be hosted for free using **Render.com** (backend + database) and **
 
 ## License
 
-For educational purposes only. Not affiliated with FIFA.
+Not affiliated with FIFA.
