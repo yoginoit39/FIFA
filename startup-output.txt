@@ -1,0 +1,49 @@
+[0;34m============================================[0m
+[0;34mFIFA World Cup 2026 - Complete Startup[0m
+[0;34m============================================[0m
+
+[0;36m[1/6] Checking PostgreSQL...[0m
+[0;32m✓ PostgreSQL is already running[0m
+
+[0;36m[2/6] Building backend services...[0m
+[0;32m✓ match-service already built[0m
+[0;32m✓ stadium-service already built[0m
+[0;32m✓ ticket-service already built[0m
+[0;32m✓ api-gateway already built[0m
+
+[0;36m[3/6] Starting Match Service (Port 8081)...[0m
+[1;33mWaiting for Match Service to start...[0m
+...[0;32m✓ Match Service is UP![0m
+
+[0;36m[4/6] Starting Stadium Service (Port 8082)...[0m
+[1;33mWaiting for Stadium Service to start...[0m
+...[0;32m✓ Stadium Service is UP![0m
+
+[0;36m[5/6] Starting Ticket Service (Port 8083)...[0m
+[1;33mWaiting for Ticket Service to start...[0m
+...[0;32m✓ Ticket Service is UP![0m
+
+[0;36m[6/6] Starting API Gateway (Port 8080)...[0m
+[1;33mWaiting for API Gateway to start...[0m
+............................................................[0;31m✗ API Gateway failed to start[0m
+
+[0;34m============================================[0m
+[0;34mTesting All Endpoints[0m
+[0;34m============================================[0m
+
+Testing GET /api/matches... [0;31m✗ FAIL[0m (HTTP 000)
+Testing GET /api/stadiums... [0;31m✗ FAIL[0m (HTTP 000)
+Testing GET /api/tickets... [0;31m✗ FAIL[0m (HTTP 000)
+Testing GET /api/matches/upcoming... [0;31m✗ FAIL[0m (HTTP 000)
+
+[0;34m============================================[0m
+[0;34mStartup Complete![0m
+[0;34m============================================[0m
+
+[0;31m✗ Some services failed to start[0m
+
+Check logs for errors:
+  tail -f logs/*.log
+
+To stop all services:
+  ./stop-all.sh

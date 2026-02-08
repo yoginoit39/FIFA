@@ -1,0 +1,172 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # PostgreSQL Database
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: worldcup2026-postgres
+    environment:
+      POSTGRES_DB: worldcup2026_db
+      POSTGRES_USER: worldcup_user
+      POSTGRES_PASSWORD: worldcup_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - worldcup-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U worldcup_user -d worldcup2026_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Match Service
+  # ============================================================================
+  match-service:
+    build:
+      context: ./backend/match-service
+      dockerfile: Dockerfile
+    container_name: worldcup2026-match-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: worldcup2026_db
+      DB_USER: worldcup_user
+      DB_PASSWORD: worldcup_password
+      DB_SCHEMA: match_service_schema
+      FOOTBALL_API_KEY: ${FOOTBALL_API_KEY:-your_api_key_here}
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - worldcup-network
+    volumes:
+      - ./backend/match-service/target:/app/target
+    restart: unless-stopped
+
+  # ============================================================================
+  # Stadium Service
+  # ============================================================================
+  stadium-service:
+    build:
+      context: ./backend/stadium-service
+      dockerfile: Dockerfile
+    container_name: worldcup2026-stadium-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: worldcup2026_db
+      DB_USER: worldcup_user
+      DB_PASSWORD: worldcup_password
+      DB_SCHEMA: stadium_service_schema
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - worldcup-network
+    volumes:
+      - ./backend/stadium-service/target:/app/target
+    restart: unless-stopped
+
+  # ============================================================================
+  # Ticket Service
+  # ============================================================================
+  ticket-service:
+    build:
+      context: ./backend/ticket-service
+      dockerfile: Dockerfile
+    container_name: worldcup2026-ticket-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: worldcup2026_db
+      DB_USER: worldcup_user
+      DB_PASSWORD: worldcup_password
+      DB_SCHEMA: ticket_service_schema
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - worldcup-network
+    volumes:
+      - ./backend/ticket-service/target:/app/target
+    restart: unless-stopped
+
+  # ============================================================================
+  # API Gateway
+  # ============================================================================
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: worldcup2026-api-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MATCH_SERVICE_URL: http://match-service:8081
+      STADIUM_SERVICE_URL: http://stadium-service:8082
+      TICKET_SERVICE_URL: http://ticket-service:8083
+      JWT_SECRET: ${JWT_SECRET:-default_secret_change_in_production}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - match-service
+      - stadium-service
+      - ticket-service
+    networks:
+      - worldcup-network
+    volumes:
+      - ./backend/api-gateway/target:/app/target
+    restart: unless-stopped
+
+  # ============================================================================
+  # React Frontend
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: worldcup2026-frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+    networks:
+      - worldcup-network
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  worldcup-network:
+    driver: bridge
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  postgres_data:
+    driver: local

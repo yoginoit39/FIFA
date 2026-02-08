@@ -1,0 +1,219 @@
+[0;35m========================================[0m
+[0;35mFIFA World Cup 2026 - DIAGNOSTICS[0m
+[0;35m========================================[0m
+
+[0;36m[1/10] Checking Java...[0m
+  Found: java version "21.0.7" 2025-04-15 LTS
+[0;32m✓ Java 17+ detected[0m
+
+[0;36m[2/10] Checking Maven...[0m
+[0;31m✗ ERROR: Maven not found. Install from https://maven.apache.org/[0m
+
+[0;36m[3/10] Checking Node.js...[0m
+  Found: v24.7.0
+[0;32m✓ Node.js detected[0m
+
+[0;36m[4/10] Checking Docker...[0m
+  Found: Docker version 27.3.1, build ce12230
+[0;32m✓ Docker detected[0m
+[0;32m✓ Docker daemon is running[0m
+
+[0;36m[5/10] Checking PostgreSQL...[0m
+[0;32m✓ PostgreSQL container is running[0m
+[0;32m✓ PostgreSQL is accepting connections[0m
+  Database initialized: 16 stadiums found
+[0;32m✓ Database schema initialized[0m
+
+[0;36m[6/10] Checking for port conflicts...[0m
+  Port 5432: Used by PID 752
+67871 ()
+  Port 8080: Available
+  Port 8081: Available
+  Port 8082: Available
+  Port 8083: Available
+  Port 5173: Used by PID 918
+69519 ()
+[1;33m⚠ WARNING: Port 5173 is in use (may be okay if it's our service)[0m
+
+[0;36m[7/10] Checking backend builds...[0m
+  match-service: Built (85M)
+[0;32m✓ match-service JAR exists[0m
+  stadium-service: Built (64M)
+[0;32m✓ stadium-service JAR exists[0m
+  ticket-service: Built (64M)
+[0;32m✓ ticket-service JAR exists[0m
+  api-gateway: Built (55M)
+[0;32m✓ api-gateway JAR exists[0m
+
+[0;36m[8/10] Analyzing log files for errors...[0m
+
+[0;34m=== api-gateway ===[0m
+Caused by: java.lang.IllegalArgumentException: Could not find class [org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration]
+Caused by: java.lang.ClassNotFoundException: org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+[0;31m✗ ERROR: Errors found in api-gateway.log (see above)[0m
+
+[1;33mLast 20 lines of api-gateway.log:[0m
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:534)
+	at java.base/java.lang.Class.forName(Class.java:513)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:123)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:534)
+	at java.base/java.lang.Class.forName(Class.java:513)
+	at org.springframework.util.ClassUtils.forName(ClassUtils.java:302)
+	at org.springframework.util.ClassUtils.resolveClassName(ClassUtils.java:343)
+	... 25 common frames omitted
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.907 s
+[INFO] Finished at: 2026-02-06T13:46:47-06:00
+[INFO] ------------------------------------------------------------------------
+
+
+[0;34m=== match-service ===[0m
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+Caused by: org.postgresql.util.PSQLException: FATAL: role "worldcup_user" does not exist
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2846)
+[0;31m✗ ERROR: Errors found in match-service.log (see above)[0m
+
+[1;33mLast 20 lines of match-service.log:[0m
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:44)
+	... 43 common frames omitted
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.367 s
+[INFO] Finished at: 2026-02-06T13:40:46-06:00
+[INFO] ------------------------------------------------------------------------
+
+
+[0;34m=== stadium-service ===[0m
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+Caused by: org.postgresql.util.PSQLException: FATAL: role "worldcup_user" does not exist
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2846)
+[0;31m✗ ERROR: Errors found in stadium-service.log (see above)[0m
+
+[1;33mLast 20 lines of stadium-service.log:[0m
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:44)
+	... 43 common frames omitted
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.817 s
+[INFO] Finished at: 2026-02-06T13:42:47-06:00
+[INFO] ------------------------------------------------------------------------
+
+
+[0;34m=== ticket-service ===[0m
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+Caused by: org.postgresql.util.PSQLException: FATAL: role "worldcup_user" does not exist
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2846)
+[0;31m✗ ERROR: Errors found in ticket-service.log (see above)[0m
+
+[1;33mLast 20 lines of ticket-service.log:[0m
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:44)
+	... 43 common frames omitted
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.853 s
+[INFO] Finished at: 2026-02-06T13:44:48-06:00
+[INFO] ------------------------------------------------------------------------
+
+
+[0;36m[9/10] Checking configuration files...[0m
+  match-service: application.yml exists
+[1;33m⚠ WARNING: match-service has placeholder values in config (may need API keys)[0m
+  stadium-service: application.yml exists
+  ticket-service: application.yml exists
+  api-gateway: application.yml exists
+
+[0;36m[10/10] Testing service startup (quick test)...[0m
+This will attempt to start each service briefly to detect startup errors...
+
+[1;33mDo you want to test actual service startup? (takes ~1 min per service) [y/N][0m
+
+[0;34mTesting match-service...[0m
+[0;31m✗ match-service failed to start[0m
+Error output:
+./diagnose.sh: line 214: timeout: command not found
+[0;31m✗ ERROR: match-service startup failed (see output above)[0m
+
+[0;34mTesting stadium-service...[0m
+[0;31m✗ stadium-service failed to start[0m
+Error output:
+./diagnose.sh: line 214: timeout: command not found
+[0;31m✗ ERROR: stadium-service startup failed (see output above)[0m
+
+[0;34mTesting ticket-service...[0m
+[0;31m✗ ticket-service failed to start[0m
+Error output:
+./diagnose.sh: line 214: timeout: command not found
+[0;31m✗ ERROR: ticket-service startup failed (see output above)[0m
+
+[0;34mTesting api-gateway...[0m
+[0;31m✗ api-gateway failed to start[0m
+Error output:
+./diagnose.sh: line 214: timeout: command not found
+[0;31m✗ ERROR: api-gateway startup failed (see output above)[0m
+
+
+[0;35m========================================[0m
+[0;35mDIAGNOSTIC SUMMARY[0m
+[0;35m========================================[0m
+
+[0;31m✗ Found 9 error(s)[0m
+
+Please fix the errors above and try again.
+
+Common fixes:
+  1. Install missing prerequisites (Java 17, Maven, Docker)
+  2. Start Docker Desktop
+  3. Start PostgreSQL: docker-compose up -d postgres
+  4. Build services: cd backend/match-service && ./mvnw clean package
+  5. Check logs for specific errors: tail -f logs/*.log
+
+[0;36mGenerated full diagnostic report.[0m
+[0;36mShare this output to get help debugging.[0m
+

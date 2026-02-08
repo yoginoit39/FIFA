@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: api-gateway
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+# Backend Services URLs
+services:
+  match-service:
+    url: ${MATCH_SERVICE_URL:http://match-service:8081}
+  stadium-service:
+    url: ${STADIUM_SERVICE_URL:http://stadium-service:8082}
+  ticket-service:
+    url: ${TICKET_SERVICE_URL:http://ticket-service:8083}
+
+# Management & Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.worldcup.apigateway: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: DEBUG
+    com.worldcup.apigateway: DEBUG
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    root: INFO
+    com.worldcup.apigateway: INFO
+    org.springframework: WARN
