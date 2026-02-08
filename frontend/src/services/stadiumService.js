@@ -12,7 +12,7 @@ const stadiumService = {
     const response = await api.get('/api/stadiums', {
       params: { page, size },
     });
-    return response.data;
+    return response.data.content || [];
   },
 
   /**
