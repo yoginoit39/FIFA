@@ -44,7 +44,7 @@ public class PriceSnapshot {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
-    @Column(name = "currency", length = 3)
+    @Column(name = "currency", nullable = false, length = 3)
     private String currency;
 
     @Column(name = "availability_status", length = 30)
