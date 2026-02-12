@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useMatch } from '../hooks/useMatches';
 import { useTicketsByMatch } from '../hooks/useTickets';
+import { useDealsByMatch } from '../hooks/useDeals';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { formatDateTime } from '../utils/dateFormatter';
@@ -22,6 +23,10 @@ import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
+import InsightsIcon from '@mui/icons-material/Insights';
 
 const FLAG_MAP = {
   'United States': '🇺🇸',
@@ -40,6 +45,7 @@ const MatchDetailsPage = () => {
   const { id } = useParams();
   const { data: match, isLoading: matchLoading, error: matchError, refetch: refetchMatch } = useMatch(id);
   const { data: tickets, isLoading: ticketsLoading, error: ticketsError } = useTicketsByMatch(id);
+  const { data: dealComparison } = useDealsByMatch(id);
 
   if (matchLoading) return <Loading message="Loading match details..." />;
   if (matchError) return <ErrorMessage message={matchError.message} onRetry={refetchMatch} />;
@@ -240,6 +246,84 @@ const MatchDetailsPage = () => {
           Sorted by lowest price — find the best deal across providers
         </Typography>
 
+        {/* Deal Intelligence Summary */}
+        {dealComparison?.summary && (
+          <Box
+            sx={{
+              mb: 4,
+              p: 3,
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: dealComparison.summary.bestTimeToBuy === 'NOW'
+                ? 'rgba(0,230,118,0.25)'
+                : 'rgba(255,193,7,0.25)',
+              background: dealComparison.summary.bestTimeToBuy === 'NOW'
+                ? 'linear-gradient(135deg, rgba(0,230,118,0.04), rgba(0,178,72,0.02))'
+                : 'linear-gradient(135deg, rgba(255,193,7,0.04), rgba(255,143,0,0.02))',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+              <InsightsIcon sx={{ color: 'secondary.main', fontSize: 22 }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                Deal Intelligence
+              </Typography>
+            </Box>
+            <Grid container spacing={3}>
+              <Grid item xs={6} sm={3}>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
+                  Price Range
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1rem', color: 'primary.main' }}>
+                  ${dealComparison.summary.lowestPrice?.toFixed(0)} - ${dealComparison.summary.highestPrice?.toFixed(0)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
+                  Market Average
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1rem' }}>
+                  ${dealComparison.summary.averagePrice?.toFixed(0)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
+                  Best Provider
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1rem' }}>
+                  {dealComparison.summary.bestProviderName}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
+                  Recommendation
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  {dealComparison.summary.overallTrend === 'DOWN' ? (
+                    <TrendingDownIcon sx={{ color: '#00e676', fontSize: 18 }} />
+                  ) : dealComparison.summary.overallTrend === 'UP' ? (
+                    <TrendingUpIcon sx={{ color: '#ff5252', fontSize: 18 }} />
+                  ) : (
+                    <TrendingFlatIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                  )}
+                  <Chip
+                    label={dealComparison.summary.bestTimeToBuy === 'NOW' ? 'Buy Now' : 'Wait'}
+                    size="small"
+                    sx={{
+                      backgroundColor: dealComparison.summary.bestTimeToBuy === 'NOW'
+                        ? 'rgba(0,230,118,0.15)' : 'rgba(255,193,7,0.15)',
+                      color: dealComparison.summary.bestTimeToBuy === 'NOW'
+                        ? '#00e676' : '#ffc107',
+                      fontWeight: 700,
+                      border: `1px solid ${dealComparison.summary.bestTimeToBuy === 'NOW'
+                        ? 'rgba(0,230,118,0.3)' : 'rgba(255,193,7,0.3)'}`,
+                    }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+
         {ticketsLoading ? (
           <Loading message="Loading ticket options..." />
         ) : ticketsError || !tickets ? (
@@ -247,7 +331,10 @@ const MatchDetailsPage = () => {
         ) : sortedTickets.length > 0 ? (
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {sortedTickets.map((ticket, index) => {
-              const isBest = index === 0 && ticket.availabilityStatus === 'AVAILABLE' && availableTickets.length > 1;
+              const dealData = dealComparison?.deals?.find(d => d.providerName === ticket.providerName);
+              const isBest = dealData
+                ? dealComparison.deals.every(d => d.dealScore <= dealData.dealScore)
+                : (index === 0 && ticket.availabilityStatus === 'AVAILABLE' && availableTickets.length > 1);
               const isSoldOut = ticket.availabilityStatus === 'SOLD_OUT';
               return (
                 <ListItem
@@ -281,6 +368,30 @@ const MatchDetailsPage = () => {
                             }}
                           />
                         )}
+                        {dealData && (
+                          <Chip
+                            label={`Score: ${dealData.dealScore}`}
+                            size="small"
+                            sx={{
+                              backgroundColor: `${dealData.dealScore >= 70 ? 'rgba(0,230,118,0.1)' : dealData.dealScore >= 40 ? 'rgba(255,193,7,0.1)' : 'rgba(255,82,82,0.1)'}`,
+                              color: dealData.dealScore >= 70 ? '#00e676' : dealData.dealScore >= 40 ? '#ffc107' : '#ff5252',
+                              fontWeight: 700,
+                              fontSize: '0.7rem',
+                            }}
+                          />
+                        )}
+                        {dealData?.savingsPercentage > 0 && (
+                          <Chip
+                            label={`Save ${dealData.savingsPercentage.toFixed(0)}%`}
+                            size="small"
+                            sx={{
+                              backgroundColor: 'rgba(0,230,118,0.1)',
+                              color: '#00e676',
+                              fontWeight: 700,
+                              fontSize: '0.7rem',
+                            }}
+                          />
+                        )}
                       </Box>
                     }
                     secondary={
@@ -295,6 +406,11 @@ const MatchDetailsPage = () => {
                         >
                           {isSoldOut ? 'Sold Out' : ticket.priceRange}
                         </Typography>
+                        {dealData && !isSoldOut && (
+                          dealData.priceTrend === 'DOWN' ? <TrendingDownIcon sx={{ color: '#00e676', fontSize: 18 }} />
+                          : dealData.priceTrend === 'UP' ? <TrendingUpIcon sx={{ color: '#ff5252', fontSize: 18 }} />
+                          : <TrendingFlatIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                        )}
                         <Chip
                           label={formatAvailability(ticket.availabilityStatus)}
                           size="small"

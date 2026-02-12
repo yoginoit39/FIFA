@@ -107,6 +107,39 @@ services:
         value: ticket_service_schema
 
   - type: web
+    name: deal-finder-service
+    runtime: docker
+    plan: free
+    rootDir: backend/deal-finder-service
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: worldcup-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: worldcup-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: worldcup-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: worldcup-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: worldcup-db
+          property: password
+      - key: DB_SCHEMA
+        value: deal_finder_schema
+
+  - type: web
     name: api-gateway
     runtime: docker
     plan: free
@@ -119,4 +152,4 @@ services:
       - key: JWT_SECRET
         generateValue: true
       # Service URLs must be set manually after deployment:
-      # MATCH_SERVICE_URL, STADIUM_SERVICE_URL, TICKET_SERVICE_URL
+      # MATCH_SERVICE_URL, STADIUM_SERVICE_URL, TICKET_SERVICE_URL, DEAL_FINDER_SERVICE_URL

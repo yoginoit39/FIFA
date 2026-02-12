@@ -7,6 +7,7 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import StadiumIcon from '@mui/icons-material/Stadium';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 const StatBadge = ({ value, label }) => (
   <Box sx={{ textAlign: 'center', px: { xs: 2, md: 4 } }}>
@@ -236,19 +237,19 @@ const HomePage = () => {
             textAlign: 'center',
           }}
         >
-          <ConfirmationNumberIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
+          <LocalOfferIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
           <Typography variant="h4" gutterBottom>
             Get Your Tickets Now
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 500, mx: 'auto' }}>
-            Compare prices across FIFA Official, Ticketmaster, StubHub, and SeatGeek to find the best deal.
+            AI-scored deals across 10+ providers. Find the best prices for every match with trend analysis and buy recommendations.
           </Typography>
           <Button
             variant="contained"
             size="large"
             component={RouterLink}
-            to="/matches"
-            startIcon={<ConfirmationNumberIcon />}
+            to="/deals"
+            startIcon={<LocalOfferIcon />}
             sx={{
               background: 'linear-gradient(135deg, #ffc107, #ff8f00)',
               color: '#000',
@@ -257,7 +258,7 @@ const HomePage = () => {
               '&:hover': { background: 'linear-gradient(135deg, #ffd54f, #ffc107)' },
             }}
           >
-            Compare Ticket Prices
+            Find Best Deals
           </Button>
         </Box>
       </Container>

@@ -8,6 +8,7 @@ import MatchesPage from './pages/MatchesPage';
 import MatchDetailsPage from './pages/MatchDetailsPage';
 import StadiumsPage from './pages/StadiumsPage';
 import StadiumDetailsPage from './pages/StadiumDetailsPage';
+import DealsPage from './pages/DealsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -148,6 +149,7 @@ function App() {
               <Route path="/matches/:id" element={<MatchDetailsPage />} />
               <Route path="/stadiums" element={<StadiumsPage />} />
               <Route path="/stadiums/:id" element={<StadiumDetailsPage />} />
+              <Route path="/deals" element={<DealsPage />} />
             </Routes>
           </Layout>
         </Router>

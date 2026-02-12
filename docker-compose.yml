@@ -107,6 +107,34 @@ services:
     restart: unless-stopped
 
   # ============================================================================
+  # Deal Finder Service
+  # ============================================================================
+  deal-finder-service:
+    build:
+      context: ./backend/deal-finder-service
+      dockerfile: Dockerfile
+    container_name: worldcup2026-deal-finder
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: worldcup2026_db
+      DB_USER: worldcup_user
+      DB_PASSWORD: worldcup_password
+      DB_SCHEMA: deal_finder_schema
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - worldcup-network
+    volumes:
+      - ./backend/deal-finder-service/target:/app/target
+    restart: unless-stopped
+
+  # ============================================================================
   # API Gateway
   # ============================================================================
   api-gateway:
@@ -119,6 +147,7 @@ services:
       MATCH_SERVICE_URL: http://match-service:8081
       STADIUM_SERVICE_URL: http://stadium-service:8082
       TICKET_SERVICE_URL: http://ticket-service:8083
+      DEAL_FINDER_SERVICE_URL: http://deal-finder-service:8084
       JWT_SECRET: ${JWT_SECRET:-default_secret_change_in_production}
     ports:
       - "8080:8080"
@@ -126,6 +155,7 @@ services:
       - match-service
       - stadium-service
       - ticket-service
+      - deal-finder-service
     networks:
       - worldcup-network
     volumes:

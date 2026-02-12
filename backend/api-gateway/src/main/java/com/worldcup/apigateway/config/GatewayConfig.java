@@ -29,6 +29,9 @@ public class GatewayConfig {
     @Value("${services.ticket-service.url:http://ticket-service:8083}")
     private String ticketServiceUrl;
 
+    @Value("${services.deal-finder.url:http://deal-finder-service:8084}")
+    private String dealFinderServiceUrl;
+
     @Bean
     public WebClient webClient() {
         return WebClient.builder().build();
@@ -41,7 +44,9 @@ public class GatewayConfig {
             .andRoute(path("/api/stadiums/**"),
                 request -> proxyRequest(request, stadiumServiceUrl, webClient))
             .andRoute(path("/api/tickets/**"),
-                request -> proxyRequest(request, ticketServiceUrl, webClient));
+                request -> proxyRequest(request, ticketServiceUrl, webClient))
+            .andRoute(path("/api/deals/**"),
+                request -> proxyRequest(request, dealFinderServiceUrl, webClient));
     }
 
     private Mono<ServerResponse> proxyRequest(ServerRequest request, String targetUrl, WebClient webClient) {

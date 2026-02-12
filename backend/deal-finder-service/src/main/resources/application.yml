@@ -1,0 +1,163 @@
+spring:
+  application:
+    name: deal-finder-service
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:worldcup2026_db}?currentSchema=${DB_SCHEMA:deal_finder_schema}
+    username: ${DB_USER:worldcup_user}
+    password: ${DB_PASSWORD:worldcup_password}
+    driver-class-name: org.postgresql.Driver
+
+    # HikariCP Connection Pool
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      pool-name: DealFinderServiceHikariCP
+
+  # JPA/Hibernate Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        default_schema: ${DB_SCHEMA:deal_finder_schema}
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+  # Cache Configuration
+  cache:
+    type: caffeine
+    cache-names:
+      - dealComparison
+      - dealSummary
+      - topDeals
+      - providers
+      - priceHistory
+    caffeine:
+      spec: maximumSize=200,expireAfterWrite=15m
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8084}
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+# Management & Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  info:
+    title: Deal Finder Service API
+    description: FIFA World Cup 2026 - Ticket Deal Finding & Price Comparison Engine
+    version: 1.0.0
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.worldcup.dealfinderservice: DEBUG
+    org.springframework.web: INFO
+    org.springframework.data: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/deal-finder-service.log
+    max-size: 10MB
+    max-history: 30
+
+# External API Configuration
+external-api:
+  ticketmaster:
+    base-url: https://app.ticketmaster.com/discovery/v2
+    api-key: ${TICKETMASTER_API_KEY:demo_key}
+  seatgeek:
+    base-url: https://api.seatgeek.com/2
+    client-id: ${SEATGEEK_CLIENT_ID:demo_id}
+
+# Internal Service URLs
+services:
+  match-service:
+    url: ${MATCH_SERVICE_URL:http://localhost:8081}
+  ticket-service:
+    url: ${TICKET_SERVICE_URL:http://localhost:8083}
+
+# Price Fetch Scheduler
+price-fetch:
+  enabled: ${PRICE_FETCH_ENABLED:true}
+  cron: "0 0 */4 * * *"
+  score-cron: "0 10 */4 * * *"
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    root: DEBUG
+    com.worldcup.dealfinderservice: DEBUG
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    show-sql: false
+
+  datasource:
+    url: jdbc:postgresql://${RDS_ENDPOINT}:${RDS_PORT:5432}/${RDS_DATABASE}?currentSchema=deal_finder_schema&ssl=true&sslmode=require
+    username: ${RDS_USER}
+    password: ${RDS_PASSWORD}
+
+logging:
+  level:
+    root: INFO
+    com.worldcup.dealfinderservice: INFO
+    org.springframework: WARN
+    org.hibernate: WARN

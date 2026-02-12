@@ -17,6 +17,8 @@ services:
     url: ${STADIUM_SERVICE_URL:http://stadium-service:8082}
   ticket-service:
     url: ${TICKET_SERVICE_URL:http://ticket-service:8083}
+  deal-finder:
+    url: ${DEAL_FINDER_SERVICE_URL:http://deal-finder-service:8084}
 
 # Management & Actuator
 management:

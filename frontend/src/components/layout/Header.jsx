@@ -3,6 +3,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import StadiumIcon from '@mui/icons-material/Stadium';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 const Header = () => {
   const location = useLocation();
@@ -10,6 +11,7 @@ const Header = () => {
   const navLinks = [
     { label: 'Matches', path: '/matches', icon: <SportsSoccerIcon fontSize="small" /> },
     { label: 'Stadiums', path: '/stadiums', icon: <StadiumIcon fontSize="small" /> },
+    { label: 'Deals', path: '/deals', icon: <LocalOfferIcon fontSize="small" /> },
   ];
 
   return (
