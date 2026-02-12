@@ -36,6 +36,7 @@ cd fifa-worldcup-2026
 docker compose up --build
 ```
 
+
 Then open http://localhost:5173
 
 ## Features
