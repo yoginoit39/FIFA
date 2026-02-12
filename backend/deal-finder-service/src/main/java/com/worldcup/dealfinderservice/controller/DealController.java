@@ -1,6 +1,7 @@
 package com.worldcup.dealfinderservice.controller;
 
 import com.worldcup.dealfinderservice.dto.*;
+import com.worldcup.dealfinderservice.service.AnalyticsService;
 import com.worldcup.dealfinderservice.service.DealComparisonService;
 import com.worldcup.dealfinderservice.service.DealScoringService;
 import com.worldcup.dealfinderservice.service.PriceFetchService;
@@ -29,6 +30,7 @@ public class DealController {
     private final ProviderService providerService;
     private final PriceFetchService priceFetchService;
     private final DealScoringService dealScoringService;
+    private final AnalyticsService analyticsService;
 
     @GetMapping("/match/{matchId}")
     @Operation(summary = "Get deal comparison for a match", description = "Returns all deals, summary, and last updated time for a specific match")
@@ -120,6 +122,43 @@ public class DealController {
         log.info("GET /api/deals/providers/{} - Get provider by ID", id);
         ProviderDTO provider = providerService.getProviderById(id);
         return ResponseEntity.ok(provider);
+    }
+
+    @GetMapping("/analytics/overview")
+    @Operation(summary = "Get market overview", description = "Returns overall market statistics and trends")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Market overview retrieved successfully")
+    })
+    public ResponseEntity<MarketOverviewDTO> getMarketOverview() {
+        log.info("GET /api/deals/analytics/overview - Get market overview");
+        MarketOverviewDTO overview = analyticsService.getMarketOverview();
+        return ResponseEntity.ok(overview);
+    }
+
+    @GetMapping("/analytics/trending")
+    @Operation(summary = "Get trending matches", description = "Returns matches ranked by popularity and deal activity")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Trending matches retrieved successfully")
+    })
+    public ResponseEntity<List<TrendingMatchDTO>> getTrendingMatches(
+            @Parameter(description = "Maximum number of matches to return", example = "10")
+            @RequestParam(defaultValue = "10") int limit) {
+        log.info("GET /api/deals/analytics/trending - Get top {} trending matches", limit);
+        List<TrendingMatchDTO> trending = analyticsService.getTrendingMatches(limit);
+        return ResponseEntity.ok(trending);
+    }
+
+    @GetMapping("/analytics/price-drops")
+    @Operation(summary = "Get biggest price drops", description = "Returns matches with the biggest savings vs market average")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Price drops retrieved successfully")
+    })
+    public ResponseEntity<List<TrendingMatchDTO>> getBiggestPriceDrops(
+            @Parameter(description = "Maximum number of matches to return", example = "10")
+            @RequestParam(defaultValue = "10") int limit) {
+        log.info("GET /api/deals/analytics/price-drops - Get top {} price drops", limit);
+        List<TrendingMatchDTO> drops = analyticsService.getBiggestPriceDrops(limit);
+        return ResponseEntity.ok(drops);
     }
 
     @PostMapping("/admin/fetch-prices")

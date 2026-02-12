@@ -43,6 +43,9 @@ spring:
       - topDeals
       - providers
       - priceHistory
+      - marketOverview
+      - trendingMatches
+      - priceDrops
     caffeine:
       spec: maximumSize=200,expireAfterWrite=15m
 

@@ -20,7 +20,10 @@ public class CacheConfig {
                 "dealSummary",
                 "topDeals",
                 "providers",
-                "priceHistory"
+                "priceHistory",
+                "marketOverview",
+                "trendingMatches",
+                "priceDrops"
         );
 
         cacheManager.setCaffeine(Caffeine.newBuilder()

@@ -51,3 +51,27 @@ export const useProviders = () => {
     staleTime: 60 * 60 * 1000,
   });
 };
+
+export const useMarketOverview = () => {
+  return useQuery({
+    queryKey: ['deals', 'analytics', 'overview'],
+    queryFn: dealService.getMarketOverview,
+    staleTime: 15 * 60 * 1000,
+  });
+};
+
+export const useTrendingMatches = (limit = 10) => {
+  return useQuery({
+    queryKey: ['deals', 'analytics', 'trending', limit],
+    queryFn: () => dealService.getTrendingMatches(limit),
+    staleTime: 15 * 60 * 1000,
+  });
+};
+
+export const usePriceDrops = (limit = 10) => {
+  return useQuery({
+    queryKey: ['deals', 'analytics', 'price-drops', limit],
+    queryFn: () => dealService.getPriceDrops(limit),
+    staleTime: 15 * 60 * 1000,
+  });
+};
