@@ -138,6 +138,8 @@ services:
           property: password
       - key: DB_SCHEMA
         value: deal_finder_schema
+      - key: DDL_AUTO
+        value: update
 
   - type: web
     name: api-gateway
