@@ -1,6 +1,7 @@
 import { Container, Typography, Box, Grid, Card, CardContent, Chip, Button, LinearProgress } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTopDeals, useDealSummaries } from '../hooks/useDeals';
+import { useMatchLookup } from '../hooks/useMatches';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -25,6 +26,13 @@ const getDealScoreColor = (score) => {
 const DealsPage = () => {
   const { data: topDeals, isLoading: dealsLoading, error: dealsError, refetch } = useTopDeals(20);
   const { data: summaries } = useDealSummaries();
+  const { lookup: matchLookup } = useMatchLookup();
+
+  const getMatchLabel = (matchId) => {
+    const m = matchLookup[matchId];
+    if (m) return `${m.homeTeam?.name || 'TBD'} vs ${m.awayTeam?.name || 'TBD'}`;
+    return `Match ${matchId}`;
+  };
 
   const matchCount = summaries?.length || 0;
   const lowestOverall = summaries?.length > 0
@@ -246,6 +254,9 @@ const DealsPage = () => {
                               <VerifiedIcon sx={{ color: 'primary.main', fontSize: 18 }} />
                             )}
                           </Box>
+                          <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 600 }}>
+                            {getMatchLabel(deal.matchId)}
+                          </Typography>
                           {deal.trustScore && (
                             <Typography variant="caption" color="text.secondary">
                               Trust Score: {deal.trustScore}/100

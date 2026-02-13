@@ -87,6 +87,27 @@ export const useLiveMatches = () => {
 };
 
 /**
+ * Get all matches as a lookup map (matchId -> match data)
+ * Useful for cross-referencing matchIds from analytics endpoints
+ */
+export const useMatchLookup = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ['matches', 0, 100],
+    queryFn: () => matchService.getAllMatches(0, 100),
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const lookup = {};
+  if (data?.content) {
+    data.content.forEach((match) => {
+      lookup[match.id] = match;
+    });
+  }
+
+  return { lookup, ...rest };
+};
+
+/**
  * Get all teams
  */
 export const useTeams = () => {

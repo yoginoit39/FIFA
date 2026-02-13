@@ -1,6 +1,7 @@
 import { Container, Typography, Box, Grid, Card, CardContent, Chip, Button, LinearProgress } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useMarketOverview, useTrendingMatches, usePriceDrops } from '../hooks/useDeals';
+import { useMatchLookup } from '../hooks/useMatches';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
@@ -80,6 +81,13 @@ const TrendingPage = () => {
   const { data: overview, isLoading: overviewLoading, error: overviewError, refetch: refetchOverview } = useMarketOverview();
   const { data: trending, isLoading: trendingLoading } = useTrendingMatches(18);
   const { data: priceDrops, isLoading: dropsLoading } = usePriceDrops(10);
+  const { lookup: matchLookup } = useMatchLookup();
+
+  const getMatchLabel = (matchId) => {
+    const m = matchLookup[matchId];
+    if (m) return `${m.homeTeam?.name || 'TBD'} vs ${m.awayTeam?.name || 'TBD'}`;
+    return `Match ${matchId}`;
+  };
 
   const isLoading = overviewLoading && trendingLoading;
 
@@ -332,7 +340,7 @@ const TrendingPage = () => {
                             </Box>
                             <Box>
                               <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                                Match {match.matchId}
+                                {getMatchLabel(match.matchId)}
                               </Typography>
                               {match.bestProviderName && (
                                 <Typography variant="caption" color="text.secondary">
@@ -528,7 +536,7 @@ const TrendingPage = () => {
                         </Box>
                         <Box sx={{ minWidth: 0 }}>
                           <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                            Match {drop.matchId}
+                            {getMatchLabel(drop.matchId)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" noWrap>
                             {drop.trendingReason}
